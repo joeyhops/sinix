@@ -1,5 +1,6 @@
 #include <hwcom/interrupts.h>
 
+using namespace sinix;
 using namespace sinix::common;
 using namespace sinix::hwcom;
 
@@ -41,7 +42,9 @@ void InterruptManager::SetInterruptDescriptorTableEntry(
   interruptDescriptorTable[interruptNumber].reserved = 0;
 }
 
-InterruptManager::InterruptManager(GlobalDescriptorTable* gdt) : picMasterCommand(0x20), picMasterData(0x21), picSlaveCommand(0xA0), picSlaveData(0xA1) {
+InterruptManager::InterruptManager(GlobalDescriptorTable* gdt, TaskManager* taskManager) : picMasterCommand(0x20), picMasterData(0x21), picSlaveCommand(0xA0), picSlaveData(0xA1) {
+  this->taskManager = taskManager;
+
   uint16_t CodeSegment = gdt->CodeSegmentSelector();
   const uint8_t IDT_INTERRUPT_GATE = 0xE;
 
@@ -100,6 +103,7 @@ uint32_t InterruptManager::HandleInterrupt(uint8_t interruptNumber, uint32_t esp
   return esp;
 }
 
+// TODO: switch ESP param for CPU state param
 uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp) {
  
   if (handlers[interruptNumber] != 0) {
@@ -107,6 +111,10 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t e
   } else if (interruptNumber != 0x20) {
     printf("UNHANDLED INTERRUPT 0x");
     printfHex(interruptNumber);
+  }
+
+  if (interruptNumber == 0x20) {
+    esp = (uint32_t)taskManager->Schedule((CPUState*)esp);
   }
 
   if (0x20 <= interruptNumber && interruptNumber < 0x30) {

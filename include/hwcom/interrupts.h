@@ -1,9 +1,10 @@
 #ifndef _SINIX_HWCOM_INTERRUPTS_H_
 #define _SINIX_HWCOM_INTERRUPTS_H_
 
+#include <gdt.h>
+#include <multitasking.h>
 #include <common/types.h>
 #include <hwcom/port.h>
-#include <gdt.h>
 
 namespace sinix {
   namespace hwcom {
@@ -26,6 +27,7 @@ namespace sinix {
       protected:
         static InterruptManager* ActiveInterruptManager;
         InterruptHandler* handlers[256];
+        TaskManager *taskManager;
 
         struct GateDescriptor {
           sinix::common::uint16_t handlerAddressLowBits;
@@ -63,7 +65,7 @@ namespace sinix {
         Port8BitSlow picSlaveData;
 
       public:
-        InterruptManager(sinix::GlobalDescriptorTable* gdt);
+        InterruptManager(sinix::GlobalDescriptorTable* gdt, sinix::TaskManager* taskManager);
         ~InterruptManager();
 
         void Activate();

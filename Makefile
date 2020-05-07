@@ -8,7 +8,8 @@ objects = obj/loader.o \
 				 	obj/hwcom/port.o \
 				 	obj/hwcom/interruptstubs.o \
 				 	obj/hwcom/interrupts.o \
-				 	obj/hwcom/pci.o \
+				 	obj/multitasking.o \
+					obj/hwcom/pci.o \
 					obj/drivers/keyboard.o \
 				 	obj/drivers/mouse.o \
 				 	obj/drivers/vga.o \
