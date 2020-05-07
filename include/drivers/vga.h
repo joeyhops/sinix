@@ -34,6 +34,7 @@ namespace sinix {
         virtual bool SetMode(sinix::common::uint32_t width, sinix::common::uint32_t height, sinix::common::uint32_t colordepth);
         virtual void PutPixel(sinix::common::uint32_t x, sinix::common::uint32_t y, sinix::common::uint8_t r, sinix::common::uint8_t g, sinix::common::uint8_t b);
         virtual void PutPixel(sinix::common::uint32_t x, sinix::common::uint32_t y, sinix::common::uint8_t colorIndex);
+        virtual void FillRectangle(sinix::common::uint32_t x, sinix::common::uint32_t y, sinix::common::uint32_t w, sinix::common::uint32_t h, sinix::common::uint8_t r, sinix::common::uint8_t g, sinix::common::uint8_t b);
     };
   }
 }
