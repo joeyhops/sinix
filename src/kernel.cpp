@@ -1,3 +1,7 @@
+/**
+ * SINIX - By Joe
+ */
+
 #include <common/types.h>
 #include <gdt.h>
 #include <drivers/driver.h>
