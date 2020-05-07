@@ -11,7 +11,8 @@ objects = obj/loader.o \
 				 	obj/hwcom/pci.o \
 					obj/drivers/keyboard.o \
 				 	obj/drivers/mouse.o \
-				 	obj/kernel.o
+				 	obj/drivers/vga.o \
+					obj/kernel.o
 
 obj/%.o: src/%.cpp
 	mkdir -p $(@D)
@@ -43,7 +44,7 @@ sinix.iso: sinix.bin
 	rm -rf iso
 
 run: sinix.iso
-	qemu-system-i386 -cdrom sinix.iso
+	qemu-system-i386 -cdrom sinix.iso -vga std
 
 .PHONY: clean
 clean:

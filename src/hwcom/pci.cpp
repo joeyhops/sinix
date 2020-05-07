@@ -112,7 +112,7 @@ BaseAddressRegister PeripheralComponentInterconnectController::GetBaseAddressReg
     }
     result.prefetchable = ((bar_value >> 3) & 0x1) == 0x1;
   } else { // InputOutput
-    result.address = (uint8_t*)(bar_value & -0x3);
+    result.address = (uint8_t*)(bar_value & ~0x3);
     result.prefetchable = false;
   }
   
