@@ -8,6 +8,10 @@
 #include <drivers/vga.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
+#include <gui/render.h>
+
+// SETTINGS
+#define SINIX_GRAPHICAL_MODE
 
 using namespace sinix;
 using namespace sinix::common;
@@ -102,19 +106,27 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
  
   printf("Initializing Hardware, Stage 1\n");
 
+#ifdef SINIX_GRAPHICAL_MODE
   Desktop desktop(320, 200, 0x00, 0x00, 0xA8);
+#endif
 
   DriverManager drvManager;
 
-  // KeyboardEventHandler kbEvnt;
-  
-  // KeyboardDriver keyboard(&interrupts, &kbEvnt);
+#ifdef SINIX_GRAPHICAL_MODE 
   KeyboardDriver keyboard(&interrupts, &desktop);
-  drvManager.AddDriver(&keyboard);
+#else
+  KeyboardEventHandler kbEvnt;
+  KeyboardDriver keyboard(&interrupts, &kbEvnt);
+#endif
+
+  drvManager.AddDriver(&keyboard);  
   
-  // MouseToConsole mouseHandler;
-  // MouseDriver mouse(&interrupts, &mouseHandler);
+#ifdef SINIX_GRAPHICAL_MODE
   MouseDriver mouse(&interrupts, &desktop);
+#else
+  MouseToConsole mouseHandler;
+  MouseDriver mouse(&interrupts, &mouseHandler);
+#endif
   drvManager.AddDriver(&mouse);
 
   PeripheralComponentInterconnectController PCIController;
@@ -122,21 +134,30 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
 
   VideoGraphicsArray vga;
 
+#ifdef SINIX_GRAPHICAL_MODE
+  Render rend(320, 200);
+#endif
+  
   printf("Initializing Hardware, Stage 2\n");
 
   drvManager.ActivateAll();
 
   printf("Initializing Hardware, Stage 3\n");
-  vga.SetMode(320, 200, 8);
 
+#ifdef SINIX_GRAPHICAL_MODE
+  vga.SetMode(320, 200, 8);
   Window win1(&desktop, 10, 10, 20, 20, 0xA8, 0x00, 0x00);
   desktop.AddChild(&win1);
   Window win2(&desktop, 40, 15, 30, 30, 0x00, 0xA8, 0x00);
   desktop.AddChild(&win2);
+#endif
 
   interrupts.Activate();
 
   while(1) {
-    desktop.Draw(&vga);
+#ifdef SINIX_GRAPHICAL_MODE 
+    desktop.Draw(&rend);
+    rend.display(&vga);
+#endif
   }
 }
