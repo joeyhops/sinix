@@ -6,6 +6,8 @@
 #include <common/types.h>
 #include <hwcom/interrupts.h>
 
+#include <mmu.h>
+
 namespace sinix {
   namespace hwcom {
     enum BaseAddressRegisterType {

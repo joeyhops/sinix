@@ -12,8 +12,24 @@ namespace sinix {
   };
 
   class MemoryManager {
+    protected:
+      MemoryChunk* first;
     
+    public:
+      static MemoryManager *activeMemoryManager;
+
+      MemoryManager(sinix::common::size_t start, sinix::common::size_t size);
+      ~MemoryManager();
+
+      void* malloc(sinix::common::size_t size);
+      void free(void* ptr);
   };
 }
+
+void* operator new(unsigned size);
+void* operator new[](unsigned size);
+
+void operator delete(void* ptr);
+void operator delete[](void* ptr);
 
 #endif

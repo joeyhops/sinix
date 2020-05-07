@@ -124,6 +124,8 @@ Driver* PeripheralComponentInterconnectController::GetDriver(PeripheralComponent
     case 0x1022: // AMD
       switch (dev.device_id) {
         case 0x2000: // AM79c973
+          // EXAMPLE
+          // driver = new amd_am79c973();
           break;
       }
       break;
