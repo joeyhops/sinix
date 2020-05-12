@@ -96,6 +96,8 @@ namespace sinix {
         static void HandleException0x12();
         static void HandleException0x13();
 
+        static void HandleInterruptRequest0x80();
+
         Port8BitSlow picMasterCommand;
         Port8BitSlow picSlaveCommand;
         Port8BitSlow picMasterData;

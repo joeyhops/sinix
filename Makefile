@@ -9,6 +9,7 @@ objects = obj/loader.o \
 				 	obj/hwcom/port.o \
 				 	obj/hwcom/interruptstubs.o \
 				 	obj/hwcom/interrupts.o \
+					obj/syscalls.o \
 				 	obj/multitasking.o \
 					obj/drivers/amd_am79c973.o \
 					obj/hwcom/pci.o \

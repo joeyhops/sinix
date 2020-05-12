@@ -58,6 +58,8 @@ HandleInterruptRequest 0x0E
 HandleInterruptRequest 0x0F
 HandleInterruptRequest 0x31
 
+HandleInterruptRequest 0x80
+
 int_bottom:
   # Save Registers
   #pusha

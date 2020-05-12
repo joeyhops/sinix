@@ -3,6 +3,7 @@
 #include <mmu.h>
 #include <drivers/driver.h>
 #include <hwcom/interrupts.h>
+#include <syscalls.h>
 #include <hwcom/pci.h>
 #include <drivers/keyboard.h>
 #include <drivers/mouse.h>
@@ -103,14 +104,18 @@ class MouseToConsole : public MouseEventHandler {
     }
 };
 
+void sysprintf(char* str) {
+  asm("int $0x80" : : "a" (4), "b" (str));
+}
+
 void taskA() {
   while(true)
-    printf("A");
+    sysprintf("A");
 }
 
 void taskB() {
   while(true)
-    printf("NOT A");
+    sysprintf("NOT A");
 }
 
 typedef void (*constructor)();
@@ -146,13 +151,14 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   printf("\n");
 
   TaskManager taskManager;
-  // Task task1(&gdt, taskA);
-  // Task task2(&gdt, taskB);
-  // taskManager.AddTask(&task1);
-  // taskManager.AddTask(&task2);
+  Task task1(&gdt, taskA);
+  Task task2(&gdt, taskB);
+  taskManager.AddTask(&task1);
+  taskManager.AddTask(&task2);
 
   InterruptManager interrupts(0x20, &gdt, &taskManager);
- 
+  SysCallHandler sysCalls(&interrupts, 0x80);
+
   printf("Initializing Hardware, Stage 1\n");
 
 #ifdef SINIX_GRAPHICAL_MODE
@@ -202,6 +208,7 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
 #endif
 
   // Interrupt 14
+ /**
   AdvancedTechnologyAttachment ata0m(0x1F0, true);
   printf("ATA Primary Master: ");
   ata0m.Identify();
@@ -219,7 +226,7 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   // Interrupt 15
   AdvancedTechnologyAttachment ata1m(0x170, true);
   AdvancedTechnologyAttachment ata1s(0x170, false);
-  
+  */
   interrupts.Activate();
 
   while(1) {
