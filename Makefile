@@ -10,6 +10,7 @@ objects = obj/loader.o \
 				 	obj/hwcom/interruptstubs.o \
 				 	obj/hwcom/interrupts.o \
 				 	obj/multitasking.o \
+					obj/drivers/amd_am79c973.o \
 					obj/hwcom/pci.o \
 					obj/drivers/keyboard.o \
 				 	obj/drivers/mouse.o \
@@ -50,8 +51,7 @@ sinix.iso: sinix.bin
 	rm -rf iso
 
 run: sinix.iso
-	qemu-system-i386 -cdrom sinix.iso -vga std
-
+	qemu-system-i386 -cdrom sinix.iso -vga std -netdev user,id=n1 -device pcnet,netdev=n1
 .PHONY: clean
 clean:
 	rm -rf obj sinix.bin sinix.iso

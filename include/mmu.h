@@ -29,6 +29,10 @@ namespace sinix {
 void* operator new(unsigned size);
 void* operator new[](unsigned size);
 
+// Place New Operator
+void* operator new(unsigned size, void* ptr);
+void* operator new[](unsigned size, void* ptr);
+
 void operator delete(void* ptr);
 void operator delete[](void* ptr);
 

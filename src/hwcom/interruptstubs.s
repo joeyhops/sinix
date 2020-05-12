@@ -5,8 +5,8 @@
 .extern _ZN5sinix5hwcom16InterruptManager15HandleInterruptEhj
 
 .macro HandleException num
-.global _ZN5sinix5hwcom16InterruptManager16HandleException\num\()Ev
-_ZN5sinix5hwcom16InterruptManager16HandleException\num\()Ev:
+.global _ZN5sinix5hwcom16InterruptManager19HandleException\num\()Ev
+_ZN5sinix5hwcom16InterruptManager19HandleException\num\()Ev:
   movb $\num, (interruptnumber)
   jmp int_bottom
 .endm

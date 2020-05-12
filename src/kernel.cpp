@@ -54,6 +54,16 @@ void printf(char* str) {
   }
 }
 
+void clearScr() {
+  static uint16_t* VideoMemory = (uint16_t*)0xb8000;
+
+  for (int y = 0; y < 25; y++) {
+    for (int x = 0; x < 80; x++) {
+      VideoMemory[80 * y + x] = (VideoMemory[80 * y + x] & 0xFF00) | ' ';
+    }
+  }
+}
+
 void printfHex(uint8_t key) {
   char* foo = "00";
   char* hex = "0123456789ABCDEF";
@@ -113,6 +123,7 @@ extern "C" void callConstructors() {
 
 extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumber*/) {
   
+  clearScr();
   GlobalDescriptorTable gdt;
 
   uint32_t* memupper = (uint32_t*)((((size_t)multiboot_structure)) + 8);
@@ -139,7 +150,7 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   // taskManager.AddTask(&task1);
   // taskManager.AddTask(&task2);
 
-  InterruptManager interrupts(&gdt, &taskManager);
+  InterruptManager interrupts(0x20, &gdt, &taskManager);
  
   printf("Initializing Hardware, Stage 1\n");
 

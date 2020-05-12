@@ -81,4 +81,34 @@ void MemoryManager::free(void* ptr) {
   }
 }
 
+void* operator new(unsigned size) {
+  if (sinix::MemoryManager::activeMemoryManager == 0)
+    return 0;
+  return sinix::MemoryManager::activeMemoryManager->malloc(size);
+}
+
+void* operator new[](unsigned size) {
+  if (sinix::MemoryManager::activeMemoryManager == 0)
+    return 0;
+  return sinix::MemoryManager::activeMemoryManager->malloc(size);
+}
+
+void* operator new(unsigned size, void* ptr) {
+  return ptr;
+}
+
+void* operator new[](unsigned size, void* ptr) {
+  return ptr;
+}
+
+void operator delete(void* ptr) {
+  if (sinix::MemoryManager::activeMemoryManager != 0)
+    sinix::MemoryManager::activeMemoryManager->free(ptr);
+}
+
+void operator delete[](void* ptr) {
+  if (sinix::MemoryManager::activeMemoryManager != 0)
+    sinix::MemoryManager::activeMemoryManager->free(ptr);
+}
+
 

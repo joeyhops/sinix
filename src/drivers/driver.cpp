@@ -28,7 +28,10 @@ void DriverManager::AddDriver(Driver* driver) {
   numDrivers++;
 }
 
+void printf(char*);
+
 void DriverManager::ActivateAll() {
+  printf("ACTIVATE ALL DRIVERS\n");
   for (int i = 0; i < numDrivers; i++)
     drivers[i]->Activate();
 }
