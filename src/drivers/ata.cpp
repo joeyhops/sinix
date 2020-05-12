@@ -126,6 +126,16 @@ void AdvancedTechnologyAttachment::Write28(uint32_t sector, uint8_t* data, int c
   lbaHiPort.Write((sector & 0x00FF0000) >> 16);
   commandPort.Write(0x30);
 
+  uint8_t status = commandPort.Read();
+  while(((status & 0x80) == 0x80)
+      && ((status & 0x01) != 0x01))
+    status = commandPort.Read();
+
+  if (status & 0x01) {
+    printf("ERROR");
+    return;
+  }
+
   printf("Writing to ATA: ");
 
   for (uint16_t i = 0; i < count; i += 2) {

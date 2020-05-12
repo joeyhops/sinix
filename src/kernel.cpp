@@ -9,6 +9,7 @@
 #include <drivers/mouse.h>
 #include <drivers/vga.h>
 #include <drivers/ata.h>
+#include <fs/msdospart.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
 #include <gui/render.h>
@@ -20,6 +21,7 @@
 using namespace sinix;
 using namespace sinix::common;
 using namespace sinix::drivers;
+using namespace sinix::fs;
 using namespace sinix::hwcom;
 using namespace sinix::gui;
 
@@ -151,10 +153,10 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   printf("\n");
 
   TaskManager taskManager;
-  Task task1(&gdt, taskA);
-  Task task2(&gdt, taskB);
-  taskManager.AddTask(&task1);
-  taskManager.AddTask(&task2);
+ // Task task1(&gdt, taskA);
+ // Task task2(&gdt, taskB);
+ // taskManager.AddTask(&task1);
+ // taskManager.AddTask(&task2);
 
   InterruptManager interrupts(0x20, &gdt, &taskManager);
   SysCallHandler sysCalls(&interrupts, 0x80);
@@ -208,26 +210,12 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
 #endif
 
   // Interrupt 14
- /**
   AdvancedTechnologyAttachment ata0m(0x1F0, true);
   printf("ATA Primary Master: ");
-  ata0m.Identify();
-
-  AdvancedTechnologyAttachment ata0s(0x1F0, false);
-  printf("ATA Primary Slave: ");
-  ata0s.Identify();
-
-  char* atabuffer = "somethingfancyifulff";
-  ata0m.Write28(0,(uint8_t*)atabuffer, 21);
-  ata0m.Flush();
-
-  ata0m.Read28(0, (uint8_t*)atabuffer, 21);
-
-  // Interrupt 15
-  AdvancedTechnologyAttachment ata1m(0x170, true);
-  AdvancedTechnologyAttachment ata1s(0x170, false);
-  */
+  ata0m.Identify(); 
   interrupts.Activate();
+
+  MSDOSPartitionTable::ReadPartitions(&ata0m);
 
   while(1) {
 #ifdef SINIX_GRAPHICAL_MODE 
