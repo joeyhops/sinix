@@ -212,7 +212,10 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   // Interrupt 14
   AdvancedTechnologyAttachment ata0m(0x1F0, true);
   printf("ATA Primary Master: ");
-  ata0m.Identify(); 
+  ata0m.Identify();
+
+  AdvancedTechnologyAttachment ata0s(0x1F0, false);
+  ata0s.Identify(); 
 
   MSDOSPartitionTable::ReadPartitions(&ata0m);
 
