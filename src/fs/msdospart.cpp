@@ -1,5 +1,7 @@
 #include <fs/msdospart.h>
 
+#include <fs/fat.h>
+
 using namespace sinix;
 using namespace sinix::common;
 using namespace sinix::drivers;
@@ -26,6 +28,9 @@ void MSDOSPartitionTable::ReadPartitions(AdvancedTechnologyAttachment *hd) {
   }
 
   for (int i = 0; i < 4; i++) {
+    if (mbr.primaryPartition[i].partitionId == 0x00)
+      continue;
+
     printf(" Partition: ");
     printfHex(i & 0xFF);
 
@@ -35,5 +40,7 @@ void MSDOSPartitionTable::ReadPartitions(AdvancedTechnologyAttachment *hd) {
       printf(" not bootable. Type ");
 
     printfHex(mbr.primaryPartition[i].partitionId);
+  
+    ReadBiosBlock(hd, mbr.primaryPartition[i].start_lba);
   }
 }

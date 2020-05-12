@@ -50,8 +50,8 @@ InterruptManager::InterruptManager(uint16_t hwInterruptOffset, GlobalDescriptorT
   const uint8_t IDT_INTERRUPT_GATE = 0xE;
 
   for (uint8_t i = 255; i > 0; --i){ 
-    handlers[i] = 0;
     SetInterruptDescriptorTableEntry(i, CodeSegment, &IgnoreInterruptRequest, 0, IDT_INTERRUPT_GATE);
+    handlers[i] = 0;
   }
 
   SetInterruptDescriptorTableEntry(0, CodeSegment, &IgnoreInterruptRequest, 0, IDT_INTERRUPT_GATE);
@@ -150,18 +150,18 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t e
  
   if (handlers[interruptNumber] != 0) {
     esp = handlers[interruptNumber]->HandleInterrupt(esp);
-  } else if (interruptNumber != 0x20) {
+  } else if (interruptNumber != hwInterruptOffset) {
     printf("UNHANDLED INTERRUPT 0x");
     printfHex(interruptNumber);
   }
 
-  if (interruptNumber == 0x20) {
+  if (interruptNumber == hwInterruptOffset) {
     esp = (uint32_t)taskManager->Schedule((CPUState*)esp);
   }
 
-  if (0x20 <= interruptNumber && interruptNumber < 0x30) {
+  if (hwInterruptOffset <= interruptNumber && interruptNumber < hwInterruptOffset + 16) {
     picMasterCommand.Write(0x20);
-    if (0x28 <= interruptNumber)
+    if (hwInterruptOffset + 8 <= interruptNumber)
       picSlaveCommand.Write(0x20);
   }
   

@@ -18,6 +18,7 @@ objects = obj/loader.o \
 				 	obj/drivers/vga.o \
 					obj/drivers/ata.o \
 					obj/fs/msdospart.o \
+					obj/fs/fat.o \
 					obj/gui/widget.o \
 					obj/gui/window.o \
 					obj/gui/desktop.o \
@@ -54,7 +55,7 @@ sinix.iso: sinix.bin
 	rm -rf iso
 
 run: sinix.iso
-	qemu-system-i386 -boot menu=on -cdrom sinix.iso -hda sinixhda.img -vga std -netdev user,id=n1 -device pcnet,netdev=n1
+	qemu-system-i386 -boot menu=on -cdrom sinix.iso -hda sinixhda2.img -vga std -netdev user,id=n1 -device pcnet,netdev=n1
 .PHONY: clean
 clean:
 	rm -rf obj sinix.bin sinix.iso

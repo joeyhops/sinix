@@ -55,7 +55,7 @@ void AdvancedTechnologyAttachment::Identify() {
     return;
   }
 
-  for (uint16_t i = 0; i < 256; i++) {
+  for (int i = 0; i < 256; i++) {
     uint16_t data = dataPort.Read();
     char* foo = "  \0";
     foo[0] = (data >> 8) & 0x00FF;
@@ -66,7 +66,7 @@ void AdvancedTechnologyAttachment::Identify() {
 }
 
 void AdvancedTechnologyAttachment::Read28(uint32_t sector, uint8_t* data, int count) {
-  if (sector & 0xF0000000)
+  if (sector > 0x0FFFFFFF)
     return;
 
   if (count > bytesPerSector)
@@ -82,8 +82,7 @@ void AdvancedTechnologyAttachment::Read28(uint32_t sector, uint8_t* data, int co
   commandPort.Write(0x20);
 
   uint8_t status = commandPort.Read();
-  while(((status & 0x80) == 0x80)
-      && ((status & 0x01) != 0x01))
+  while(((status & 0x80) == 0x80) && ((status & 0x01) != 0x01))
     status = commandPort.Read();
 
   if (status & 0x01) {
@@ -91,19 +90,17 @@ void AdvancedTechnologyAttachment::Read28(uint32_t sector, uint8_t* data, int co
     return;
   }
 
-  printf("Reading From ATA: ");
-
-  for (uint16_t i = 0; i < count; i += 2) {
+  for (int i = 0; i < count; i += 2) {
     uint16_t wdata = dataPort.Read();
-
+/**
     char* foo = "  \0";
     foo[1] = (wdata >> 8) & 0xFF;
     foo[0] = wdata & 0xFF;
     printf(foo);
-  
-    data[i] = wdata & 0xFF;
+  */
+    data[i] = wdata & 0x00FF;
     if (i + 1 < count)
-      data[i+1] = (wdata >> 8) & 0xFF;
+      data[i+1] = (wdata >> 8) & 0x00FF;
   }
 
   for (uint16_t i = count + (count % 2); i < bytesPerSector; i += 2)
@@ -126,16 +123,6 @@ void AdvancedTechnologyAttachment::Write28(uint32_t sector, uint8_t* data, int c
   lbaHiPort.Write((sector & 0x00FF0000) >> 16);
   commandPort.Write(0x30);
 
-  uint8_t status = commandPort.Read();
-  while(((status & 0x80) == 0x80)
-      && ((status & 0x01) != 0x01))
-    status = commandPort.Read();
-
-  if (status & 0x01) {
-    printf("ERROR");
-    return;
-  }
-
   printf("Writing to ATA: ");
 
   for (uint16_t i = 0; i < count; i += 2) {
@@ -153,6 +140,8 @@ void AdvancedTechnologyAttachment::Write28(uint32_t sector, uint8_t* data, int c
 
   for (uint16_t i = count + (count % 2); i < bytesPerSector; i += 2)
     dataPort.Write(0x0000);
+
+  Flush();
 }
 
 void AdvancedTechnologyAttachment::Flush() {
@@ -160,8 +149,10 @@ void AdvancedTechnologyAttachment::Flush() {
   commandPort.Write(0xE7);
 
   uint8_t status = commandPort.Read();
+  if (status == 0x00)
+    return;
 
-  while (((status & 0x80) == 0x80)
+  while(((status & 0x80) == 0x80)
       && ((status & 0x01) != 0x01))
     status = commandPort.Read();
 

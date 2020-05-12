@@ -131,7 +131,7 @@ extern "C" void callConstructors() {
 
 extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumber*/) {
   
-  clearScr();
+  //clearScr();
   GlobalDescriptorTable gdt;
 
   uint32_t* memupper = (uint32_t*)((((size_t)multiboot_structure)) + 8);
@@ -189,9 +189,9 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   PeripheralComponentInterconnectController PCIController;
   PCIController.SelectDrivers(&drvManager, &interrupts);
 
-  VideoGraphicsArray vga;
 
 #ifdef SINIX_GRAPHICAL_MODE
+  VideoGraphicsArray vga;
   Render rend(320, 200);
 #endif
   
@@ -213,9 +213,10 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   AdvancedTechnologyAttachment ata0m(0x1F0, true);
   printf("ATA Primary Master: ");
   ata0m.Identify(); 
-  interrupts.Activate();
 
   MSDOSPartitionTable::ReadPartitions(&ata0m);
+
+  interrupts.Activate();
 
   while(1) {
 #ifdef SINIX_GRAPHICAL_MODE 

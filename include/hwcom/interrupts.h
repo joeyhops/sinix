@@ -54,7 +54,6 @@ namespace sinix {
             );
 
         
-        static sinix::common::uint32_t HandleInterrupt(sinix::common::uint8_t interruptNumber, sinix::common::uint32_t esp);
         static void IgnoreInterruptRequest();
         static void HandleInterruptRequest0x00();
         static void HandleInterruptRequest0x01();
@@ -74,6 +73,7 @@ namespace sinix {
         static void HandleInterruptRequest0x0F();
         static void HandleInterruptRequest0x31();
 
+        static void HandleInterruptRequest0x80();
         
         static void HandleException0x00();
         static void HandleException0x01();
@@ -95,9 +95,10 @@ namespace sinix {
         static void HandleException0x11();
         static void HandleException0x12();
         static void HandleException0x13();
-
-        static void HandleInterruptRequest0x80();
-
+ 
+        static sinix::common::uint32_t HandleInterrupt(sinix::common::uint8_t interruptNumber, sinix::common::uint32_t esp);
+        sinix::common::uint32_t DoHandleInterrupt(sinix::common::uint8_t interruptNumber, sinix::common::uint32_t esp);
+        
         Port8BitSlow picMasterCommand;
         Port8BitSlow picSlaveCommand;
         Port8BitSlow picMasterData;
@@ -111,8 +112,6 @@ namespace sinix {
 
         void Activate();
         void Deactivate();
-
-        sinix::common::uint32_t DoHandleInterrupt(sinix::common::uint8_t interruptNumber, sinix::common::uint32_t esp);
     };
 
   }
