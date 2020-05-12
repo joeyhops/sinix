@@ -7,6 +7,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/mouse.h>
 #include <drivers/vga.h>
+#include <drivers/ata.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
 #include <gui/render.h>
@@ -200,6 +201,25 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
   desktop.AddChild(&win2);
 #endif
 
+  // Interrupt 14
+  AdvancedTechnologyAttachment ata0m(0x1F0, true);
+  printf("ATA Primary Master: ");
+  ata0m.Identify();
+
+  AdvancedTechnologyAttachment ata0s(0x1F0, false);
+  printf("ATA Primary Slave: ");
+  ata0s.Identify();
+
+  char* atabuffer = "somethingfancyifulff";
+  ata0m.Write28(0,(uint8_t*)atabuffer, 21);
+  ata0m.Flush();
+
+  ata0m.Read28(0, (uint8_t*)atabuffer, 21);
+
+  // Interrupt 15
+  AdvancedTechnologyAttachment ata1m(0x170, true);
+  AdvancedTechnologyAttachment ata1s(0x170, false);
+  
   interrupts.Activate();
 
   while(1) {

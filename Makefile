@@ -15,6 +15,7 @@ objects = obj/loader.o \
 					obj/drivers/keyboard.o \
 				 	obj/drivers/mouse.o \
 				 	obj/drivers/vga.o \
+					obj/drivers/ata.o \
 					obj/gui/widget.o \
 					obj/gui/window.o \
 					obj/gui/desktop.o \
@@ -51,7 +52,7 @@ sinix.iso: sinix.bin
 	rm -rf iso
 
 run: sinix.iso
-	qemu-system-i386 -cdrom sinix.iso -vga std -netdev user,id=n1 -device pcnet,netdev=n1
+	qemu-system-i386 -hda sinixhda.img -cdrom sinix.iso -vga std -netdev user,id=n1 -device pcnet,netdev=n1
 .PHONY: clean
 clean:
 	rm -rf obj sinix.bin sinix.iso
